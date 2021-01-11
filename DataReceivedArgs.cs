@@ -8,5 +8,6 @@ namespace EasyTCP
     {
         public long ConnectionId { get; set; }
         public string Message { get; set; }
+        public Channel ThisChannel { get; set; }
     }
 }
