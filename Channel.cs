@@ -5,32 +5,34 @@ using System.Text;
 
 namespace EasyTCP
 {
-    public class Channel
+    public class Channel : IDisposable
     {
-        public readonly Server ThisServer;
+        private Server thisServer;
         public readonly string Id;
-        private TcpClient ThisClient;
-        private byte[] buffer;
+        private TcpClient thisClient;
+        private readonly byte[] buffer;
         private NetworkStream stream;
         private bool isOpen;
+        private bool disposed;
+
         public Channel(Server myServer)
         {
-            ThisServer = myServer;
+            thisServer = myServer;
             buffer = new byte[256];
             Id = Guid.NewGuid().ToString();
         }
 
         public void Open(TcpClient client)
         {
-            ThisClient = client;
+            thisClient = client;
             isOpen = true;
-            if(!ThisServer.ConnectedChannels.OpenChannels.TryAdd(Id, this))
+            if(!thisServer.ConnectedChannels.OpenChannels.TryAdd(Id, this))
             {
                 isOpen = false;
-                throw (new Exception("Unable to add channel to channel list"));
+                throw (new ChannelRegistrationException("Unable to add channel to channel list"));
             }
             string data = "";
-            using (stream = ThisClient.GetStream())
+            using (stream = thisClient.GetStream())
             {
                 int position;
 
@@ -46,7 +48,7 @@ namespace EasyTCP
                             ThisChannel = this
                         };
 
-                        ThisServer.OnDataIn(args);
+                        thisServer.OnDataIn(args);
                         if(!isOpen) { break; }
                     }
                     
@@ -62,11 +64,30 @@ namespace EasyTCP
 
         public void Close()
         {
-            stream.Dispose();
-            ThisClient.Close();
+            Dispose(false);
             isOpen = false;
-            ThisServer.ConnectedChannels.OpenChannels.TryRemove(Id, out Channel removedChannel);
+            thisServer.ConnectedChannels.OpenChannels.TryRemove(Id, out Channel removedChannel);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+                stream.Close();
+                thisClient.Close();
+                disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

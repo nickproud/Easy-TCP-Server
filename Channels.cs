@@ -1,18 +1,17 @@
-﻿using System;
+﻿
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EasyTCP
 {
     public class Channels
     {
         public ConcurrentDictionary<string, Channel> OpenChannels;
-        private Server ThisServer;
+        private readonly Server thisServer;
+        
         public Channels(Server myServer)
         {
             OpenChannels = new ConcurrentDictionary<string, Channel>();
-            ThisServer = myServer;
+            thisServer = myServer;
         }
     }
 }

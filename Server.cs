@@ -1,19 +1,29 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyTCP
 {
+  
     public class Server
     {
-        public bool Running;
+        private bool _running;
+        public bool Running
+        {
+            get
+            {
+                return _running;
+            }
+            set
+            {
+                _running = value;
+            }
+        }
         public event EventHandler<DataReceivedArgs> DataReceived;
         private TcpListener Listener;
         public Channels ConnectedChannels;
+        
         public Server()
         {
             Listener = new TcpListener(IPAddress.Parse(Globals.ServerAddress), Globals.ServerPort);
@@ -29,19 +39,15 @@ namespace EasyTCP
                 while (Running)
                 {
                     var client = await Listener.AcceptTcpClientAsync();
-                    try
-                    {
-                        Task.Run(() => new Channel(this).Open(client));
-                    }
-                    catch
-                    {
-                        //add handler here for adding to channel exception
-                    }
-                   
+                    await Task.Run(() => new Channel(this).Open(client));
                 }
 
             }
             catch(SocketException)
+            {
+                throw;
+            }
+            catch(ChannelRegistrationException)
             {
                 throw;
             }

@@ -22,4 +22,7 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B5F21E6D-4C3D-43C5-858C-C9608B5B5DAE}
 	EndGlobalSection
+	GlobalSection(NDepend) = preSolution
+		Project = ".\EasyTCP1.ndproj"
+	EndGlobalSection
 EndGlobal
