@@ -13,7 +13,7 @@ namespace EasyTCP
         public bool Running;
         public event EventHandler<DataReceivedArgs> DataReceived;
         private TcpListener Listener;
-
+        public Channels ConnectedChannels;
         public Server()
         {
             Listener = new TcpListener(IPAddress.Parse(Globals.ServerAddress), Globals.ServerPort);
@@ -25,10 +25,19 @@ namespace EasyTCP
             {
                 Listener.Start();
                 Running = true;
+                ConnectedChannels = new Channels(this);
                 while (Running)
                 {
                     var client = await Listener.AcceptTcpClientAsync();
-                    Task.Run(() => new Channel(this).Open(client));
+                    try
+                    {
+                        Task.Run(() => new Channel(this).Open(client));
+                    }
+                    catch
+                    {
+                        //add handler here for adding to channel exception
+                    }
+                   
                 }
 
             }

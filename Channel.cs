@@ -8,6 +8,7 @@ namespace EasyTCP
     public class Channel
     {
         public readonly Server ThisServer;
+        public readonly string Id;
         private TcpClient ThisClient;
         private byte[] buffer;
         private NetworkStream stream;
@@ -16,17 +17,24 @@ namespace EasyTCP
         {
             ThisServer = myServer;
             buffer = new byte[256];
+            Id = Guid.NewGuid().ToString();
         }
 
         public void Open(TcpClient client)
         {
             ThisClient = client;
             isOpen = true;
+            if(!ThisServer.ConnectedChannels.OpenChannels.TryAdd(Id, this))
+            {
+                isOpen = false;
+                throw (new Exception("Unable to add channel to channel list"));
+            }
             string data = "";
             using (stream = ThisClient.GetStream())
             {
                 int position;
-                try
+
+                while(isOpen)
                 {
                     while ((position = stream.Read(buffer, 0, buffer.Length)) != 0 && isOpen)
                     {
@@ -39,13 +47,10 @@ namespace EasyTCP
                         };
 
                         ThisServer.OnDataIn(args);
+                        if(!isOpen) { break; }
                     }
-
+                    
                 }
-                catch (ObjectDisposedException)
-                {
-                }
-                
             }
         }
 
@@ -59,7 +64,8 @@ namespace EasyTCP
         {
             stream.Dispose();
             ThisClient.Close();
-            
+            isOpen = false;
+            ThisServer.ConnectedChannels.OpenChannels.TryRemove(Id, out Channel removedChannel);
         }
 
     }
