@@ -1,2 +1,2 @@
-# Easy-TCP
+# Easy-TCP-Server
 Instructions go here
