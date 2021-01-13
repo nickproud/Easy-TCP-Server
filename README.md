@@ -3,7 +3,7 @@ Easy-TCP-Server is an easy-to-implement TCP server which handles incoming TCP da
 
 This project is built in .NET core as a class library for use in multi-platform projects requiring handling of TCP traffic. 
 
-##Getting started
+## Getting started
 
 Clone this repo or download the source files and compile the project in visual studio. You can then reference EasyTCP.dll in your .NET Core Project.
 
@@ -11,7 +11,7 @@ To start a listening TCP server, you simply need to initialize an instance of th
 
 Whenever an incoming TCP request is received by the server, a 'Channel' is opened. A 'Channel' represents a connection between server and client. Messages from the client are converted from bytes to a string in the 'Channel' and the 'DataReceived' event is fired. 
 
-##Example Implementation in a .NET Core Console App. 
+## Example Implementation in a .NET Core Console App. 
 
 The below is a demonstration of a simple console application which spins up a server and handles incoming requests
 
