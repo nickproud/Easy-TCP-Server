@@ -11,6 +11,8 @@ To start a listening TCP server, you simply need to initialize an instance of th
 
 Whenever an incoming TCP request is received by the server, a 'Channel' is opened. A 'Channel' represents a connection between server and client. Messages from the client are converted from bytes to a string in the 'Channel' and the 'DataReceived' event is fired. 
 
+The server works asynchronously firing a Task to handle each incoming client, and as a result can handle multiple clients simultaneously.
+
 ## Example Implementation in a .NET Core Console App. 
 
 The below is a demonstration of a simple console application which spins up a server and handles incoming requests
@@ -43,7 +45,11 @@ class Program
     }
     
 ```
-    
+The program above starts a server and then subscribes our 'server_OnDataIn' method to the server's 'DataReceived' event. 
+When the event fires, we are able to access properties concerning the incoming TCP data in the 'DataReceivedArgs.'
+Each instance of 'DataReceivedArgs' contains the channel on which the data was received. As you can see in the example above, we are checking the contents of the incoming message. If the message is equal to "CLOSE", we are using the 'Close()' method on the current channel to close the client's connection to the server. 
+
+
 ## Ports and Host Addresses
 By default, any server will listen on the localhost IP (127.0.0.1) on port 12400. If you want to change this for any server instance, you can do so in the static 'Globals' class. Otherwise, you can use the overloaded constructor for the 'Server' that passes the IP and Port explicitly. 
     
@@ -61,6 +67,9 @@ By default, any server will listen on the localhost IP (127.0.0.1) on port 12400
 ```csharp
     var server = new Server(myIP, myPort);
 ```
+### Manage connected clients
+
+Any client which connects to the server is stored in a concurrent dictionary called 'OpenChannels' found in the 'Channels' class, an instance of which is created within each 'Server' instance. Each client can be accessed in the dictionary using the client ConnectionID property as a key. 
     
     
     
