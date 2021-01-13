@@ -15,7 +15,7 @@ Whenever an incoming TCP request is received by the server, a 'Channel' is opene
 
 The below is a demonstration of a simple console application which spins up a server and handles incoming requests
 
-```csharp
+```
 class Program
     {
         public static Server TCPServer = new Server();
