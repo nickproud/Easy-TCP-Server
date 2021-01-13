@@ -41,25 +41,26 @@ class Program
             }
         }
     }
-    ```
     
-    ## Ports and Host Addresses
-    By default, any server will listen on the localhost IP (127.0.0.1) on port 12400. If you want to change this for any server instance, you can do so in the static 'Globals' class. Otherwise, you can use the overloaded constructor for the 'Server' that passes the IP and Port explicitly. 
+```
     
-    ### Change IP and Port globally
+## Ports and Host Addresses
+By default, any server will listen on the localhost IP (127.0.0.1) on port 12400. If you want to change this for any server instance, you can do so in the static 'Globals' class. Otherwise, you can use the overloaded constructor for the 'Server' that passes the IP and Port explicitly. 
     
-    ```csharp
+### Change IP and Port globally
+    
+```csharp
     static class Globals
     {
         public const int ServerPort = 12400;
         public const string ServerAddress = "127.0.0.1";
     }
-    ```
+```
     
-    ### Explicitly define an IP and Port on server creation
-     ```csharp
+### Explicitly define an IP and Port on server creation
+```csharp
     var server = new Server(myIP, myPort);
-    ```
+```
     
     
     
