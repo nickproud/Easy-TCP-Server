@@ -47,7 +47,9 @@ class Program
 ```
 The program above starts a server and then subscribes our 'server_OnDataIn' method to the server's 'DataReceived' event. 
 When the event fires, we are able to access properties concerning the incoming TCP data in the 'DataReceivedArgs.'
-Each instance of 'DataReceivedArgs' contains the channel on which the data was received. As you can see in the example above, we are checking the contents of the incoming message. If the message is equal to "CLOSE", we are using the 'Close()' method on the current channel to close the client's connection to the server. 
+Each instance of 'DataReceivedArgs' contains the channel on which the data was received. As you can see in the example above, we are checking the contents of the incoming message. If the message is equal to "CLOSE", we are using the 'Close()' method on the current channel to close the client's connection to the server. If the message is equal to "HELLO", we are using the 'Send()' method on the current channel to send a message to the client. 
+
+Any interation with a connected client take place within the channel. 
 
 
 ## Ports and Host Addresses
