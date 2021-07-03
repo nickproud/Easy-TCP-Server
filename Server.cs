@@ -39,7 +39,7 @@ namespace EasyTCP
                 while (Running)
                 {
                     var client = await Listener.AcceptTcpClientAsync();
-                    await Task.Run(() => new Channel(this).Open(client));
+                    Task.Run(() => new Channel(this).Open(client));
                 }
 
             }
