@@ -38,20 +38,26 @@ namespace EasyTCP
 
                 while(isOpen)
                 {
-                    while ((position = stream.Read(buffer, 0, buffer.Length)) != 0 && isOpen)
+                    if (clientDisconnected())
                     {
-                        data = Encoding.UTF8.GetString(buffer, 0, position);
-                        var args = new DataReceivedArgs()
-                        {
-                            Message = data,
-                            ConnectionId = Id,
-                            ThisChannel = this
-                        };
-
-                        thisServer.OnDataIn(args);
-                        if(!isOpen) { break; }
+                        Close();
                     }
-                    
+                    else
+                    {
+                        while ((position = stream.Read(buffer, 0, buffer.Length)) != 0 && isOpen)
+                        {
+                            data = Encoding.UTF8.GetString(buffer, 0, position);
+                            var args = new DataReceivedArgs()
+                            {
+                                Message = data,
+                                ConnectionId = Id,
+                                ThisChannel = this
+                            };
+
+                            thisServer.OnDataIn(args);
+                            if(!isOpen) { break; }
+                        }
+                    }
                 }
             }
         }
@@ -61,6 +67,7 @@ namespace EasyTCP
             var data = Encoding.UTF8.GetBytes(message);
             stream.Write(data, 0, data.Length);
         }
+
 
         public void Close()
         {
@@ -87,6 +94,11 @@ namespace EasyTCP
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        private bool clientDisconnected()
+        {
+            return (thisClient.Client.Available == 0 && thisClient.Client.Poll(1, SelectMode.SelectRead));
         }
     }
 }
